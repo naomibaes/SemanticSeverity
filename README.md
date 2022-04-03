@@ -1,4 +1,4 @@
-# vertical_expansion_method
-Companion code to evaluate the vertical semantic expansion of concepts
+# vertical_creep_method
+Companion code to evaluate the vertical semantic expansion (vertical creep) of concepts
 
 TEST
