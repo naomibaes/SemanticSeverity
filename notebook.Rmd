@@ -1,0 +1,201 @@
+---
+title: "The semantic inflation of 'trauma' in psychology"
+author: "Naomi Baes"
+output: html_notebook
+---
+
+This notebook is a companion script for the manuscript titled "*The semantic inflation of 'trauma' in psychology*". It sets up the final dataframe according to the newly developed method by linking datasets, computing word lists, and severity indices for hypothesis tests. Descriptions of the datasets and respective variables can be found in READ_ME.txt. 
+
+## Start of method setup
+
+```{r, error=FALSE, warning=FALSE, message=FALSE, include=TRUE}
+rm(list=ls()) # removes everything in global environment
+cat("\014") # clear console
+knitr::opts_chunk$set(echo = TRUE) # set all chunks to show code when run script
+
+library(here) # detect root directory 
+library(readr) # read rectangular data
+library(data.table) # for data.table function
+library(tidyr) # tidy data (main property = each column is a variable)
+library(dplyr) # manipulating datasets
+library(tidyverse) # data science
+library(lsr) # stats
+```
+### Import the data and input into data frames
+
+Load [1] collocates of trauma in the psychology corpus, [2] Warriner rating statistics, and [3] trauma frequencies in the psychology corpus.
+
+```{r, error=FALSE, warning=FALSE, message=FALSE, include=TRUE}
+# specify paths for datasets
+coll_path <- here("data", "trauma_year_counts.csv")
+warr_path <- here("data", "warriner_emotion_rat.csv")
+trauma_path <- here("data","trauma_count_relfreq.csv")
+
+# load data
+coll_count <- read.csv(coll_path) # load [1] trauma collocates in psychology abstracts per year (1970-2017)
+coll_unique <- coll_count %>% distinct(lemma) # create tibble containing initial list of trauma collocates
+warr_rat <- read.csv(warr_path) %>% rename(c("V_mean_sum"="V.Mean.Sum", "A_mean_sum"="A.Mean.Sum")) # load [2] Warriner norm ratings (1-9)
+trauma_count <- read.csv(trauma_path) %>% rename("year"="ï..year")# load [3] trauma frequencies for psychology corpus
+```
+
+### Prepare Warriner norms data frame (initially 13,915 x 65)
+
+```{r, include=TRUE, echo=TRUE}
+warr_rat2 <- warr_rat %>% select(, 1:8) #select columns for final df: X, word, M and SD for valence and arousal ratings
+warr_rat2 <- warr_rat2 %>% select(-c("V.Rat.Sum", "A.Rat.Sum", "V.SD.Sum", "A.SD.Sum")) %>% filter(word!="FALSE") %>% filter(word!="TRUE") # drop 2 rows with non-values(#)
+warr_rat2 <- warr_rat2 %>% mutate(V_mean_sum_r = 9 - warr_rat2$V_mean_sum) %>% select(-(V_mean_sum)) # reverse score `V_mean_sum`: scores range happy (1) to unhappy (9) 
+warr_rat2 <- warr_rat2[, c(1, 2, 4, 3)] %>% rename(c("lemma"="word", "id"="X")) # re-arrange and rename columns
+```
+
+## Compute Vertical Creep Measure
+
+**Step 1)** Create a matched dataframe by linking lemmas containing Warriner norm ratings to trauma collocates. 
+
+```{r, include=TRUE}
+# join Warriner lemmas by `lemma` column in trauma collocations data frame to obtain unique word matches 
+matches <- inner_join(warr_rat2, coll_count, by = "lemma") # (function retains only rows in both sets)
+matches <- matches[, c(1, 2, 5, 6, 3, 4)] #reorder columns: 27935 x 7 including repetitions in multiple years
+df <- matches # for data manipulation purposes
+
+# prep: merge mean valence and arousal statistics by summing ratings in new column
+df_word <- df %>% mutate(VA_mean_sum=(V_mean_sum_r+A_mean_sum))
+df_word <- df_word[, c(1, 2, 3, 4, 7, 6, 5)] # reorder columns
+```
+
+**Step 2)** Check the number of repetitions by year
+
+```{r, fig.width=6.8, fig.height=3, warning=FALSE, error=FALSE,message=FALSE, include=TRUE, echo=TRUE}
+# aggregate repetitions of matched lemmas by year 
+word_count <- df_word %>% group_by(year) %>% summarise(count = n_distinct(lemma)) %>% ungroup()
+head(word_count) # show df
+
+# remove years before the collocate count reaches double figures from here onwards (> 1974)
+word_distinct <- word_count %>% filter(year >= 1974)
+df_word2 <- df_word %>% filter(year >= 1974)
+``` 
+
+**Step 3)** Compute the **word list** of unique sentence-level trauma collocates with associated severity ratings to be parsed into parts of speech using spaCy.
+
+```{r, include=TRUE, echo=TRUE}
+# select for unique lemmas in "df_b" 
+word_unique <- df_word2 %>% distinct(id,lemma) # filter df_count for distinct words
+word_unique <- data.table(word_unique)
+
+# save the file, in .csv format for pos tagging, in current working directory and name file
+#write.csv(word_unique, file = 'word_list.csv') # unhash to save in working directory
+```
+
+**Step 4)** Compute the **noun list** by (1) importing part-of-speech tags for trauma collocates (spaCy output) and rematch with Warriner norms; next, (2) filter for lemmas appearing most commonly as nouns. 
+
+### Development of the Noun list
+
+Load the file tagged for parts-of-speech in spaCy external to R (tagged in Spacy (https://spacy.io/) using the “en_core_web_lg” model in python)
+
+```{r, include=TRUE, echo=TRUE}
+pos_path <- here("data","pos.csv") # load [4] pos.csv in data folder
+pos_count <- read.csv(pos_path) %>% rename("count" = "count_lemma.form") # warriner id, lemma, count in abstracts, pos
+```
+
+#### Step 1) Calculate the proportion of individual parts-of-speech from the word list in the corpus
+
+```{r, include=TRUE, echo=TRUE}
+pos_prop <- pos_count %>% group_by(pos) %>% summarise(n = n()) %>% mutate(freq = n / sum(n)) %>% ungroup()
+pos_prop <- pos_prop %>% filter(pos!="hordaland") %>% filter(pos!="lastprogramcomparedtoawaitlistcontrolcondition") %>% filter(pos!="medmedia.ie") %>% filter(pos!="s") %>% filter(pos!="umbc") %>% filter(pos!="X") %>% filter(pos!="NUM") %>% mutate(prop=freq*100) %>% arrange(desc(prop)) # delete NUM as not relevant and only 72(0.78%)
+head(pos_prop) # show df
+```
+
+#### Step 2) Filter for lemmas appearing as nouns more than other part-of-speech in the corpus. 
+
+```{r, include=TRUE, echo=TRUE}
+noun_count <- pos_count %>% group_by(id) %>% filter(pos == "NOUN" & count == max(count)) # filter on rows where pos == "NOUN" and count_lemma_pos is the max value within the group
+```
+
+#### Step 3) Compute the final noun data frame.
+
+```{r, include=TRUE, echo=TRUE}
+# join noun specific lemmas with word df to obtain variables for relevant lemmas
+df_noun <- inner_join(noun_count, df_word2, by = "lemma") %>% rename(c("id" = "id.x", "noun_count" = "count")) %>% select(-c("id.y", "pos")) 
+df_noun <- df_noun[, c(1, 2, 4, 5, 3, 6, 7, 8)] # reorder columns: 15383 x 9 including repetitions in multiple years from 1974-2017
+```
+
+### Compute severity indices (outcome variables)
+
+*Weighted average severity* = sum of (repetition*severity ratings) by year/ sum(repetition) by year; E.g., (3x10 + 1x8 + 1x6)/5 = 8.8.
+
+#### **Word Severity Indices**
+
+Compute main outcome variable `sev_word` and the weighted average for arousal (`aro_word`) and valence (`val_word`) components of the word severity index.
+
+```{r, include=TRUE, echo=TRUE}
+# Step 1: Weighted Sum. Sum of (the repetition for each word * sum of severity ratings) per year
+
+  df_word2 <- df_word2 %>% mutate(VA_prod=(repet*VA_mean_sum)) # prep: product of repeats * mean V+A ratings
+  sumVAprod_word <- aggregate(df_word2[, 8], list(df_word2$year), sum) %>% rename(c("year"="Group.1", "sumVAprod_word"="x"))  # sum VA_prod by year
+  df_word2 <- df_word2 %>% mutate(A_prod=(repet*A_mean_sum)) # prep: product of repeats * mean A ratings
+  sumAprod_word <- aggregate(df_word2[, 9], list(df_word2$year), sum) %>% rename(c("year"="Group.1", "sumAprod_word"="x")) # sum A_prod by year
+  df_word2 <- df_word2 %>% mutate(V_prod=(repet*V_mean_sum_r)) # prep: product of repeats * mean V ratings 
+  sumVprod_word <- aggregate(df_word2[, 10], list(df_word2$year), sum) %>% rename(c("year"="Group.1", "sumVprod_word"="x"))# sum V_prod by year
+  
+# Step 2: Standardisation. Weighted average = Sum of (severity product) by year/ Sum(repetition) by year
+
+  # sum the repetitions of words by year
+  sum_repet_word <- aggregate(df_word2[, 4], list(df_word2$year), sum)
+  sum_repet_word <- dplyr::rename(sum_repet_word, "year"="Group.1")
+  sum_repet_word <- dplyr::rename(sum_repet_word, "sum_repet_word"="x")
+
+  # join the sum occurrences for each word per year with the sumproducts
+  word_year <- inner_join(sum_repet_word, sumVAprod_word, by = "year") # V+A
+  word_year <- inner_join(word_year, sumAprod_word, by = "year") # A   
+  word_year <- inner_join(word_year, sumVprod_word, by = "year") # V   
+
+  # compute standardisation
+  word_year <- word_year %>% mutate(sev_word=(sumVAprod_word/sum_repet_word)) # V+A
+  word_year <- word_year %>% mutate(aro_word=(sumAprod_word/sum_repet_word)) # A
+  word_year <- word_year %>% mutate(val_word=(sumVprod_word/sum_repet_word)) # V
+
+head(word_year)
+```
+
+#### **Noun Severity Indices**
+
+Compute main outcome variable `sev_noun` and the weighted average for arousal (`aro_noun`) and valence (`val_noun`) components of the word severity index.
+
+```{r, include=TRUE, echo=TRUE}
+# Step 1: Weighted Sum. Sum of (the repetition for each word * sum of severity ratings) per year
+
+  df_noun <- df_noun %>% mutate(VA_prod=(repet*VA_mean_sum)) # prep: product of repeats * mean V+A ratings
+  sumVAprod_noun <- aggregate(df_noun[, 9], list(df_noun$year), sum) %>% rename("year"="Group.1")  # sum VA_prod by year
+  df_noun <- df_noun %>% mutate(A_prod=(repet*A_mean_sum)) # prep: product of repeats * mean A ratings
+  sumAprod_noun <- aggregate(df_noun[, 10], list(df_noun$year), sum) %>% rename("year"="Group.1") # sum A_prod by year
+  df_noun <- df_noun %>% mutate(V_prod=(repet*V_mean_sum_r)) # prep: product of repeats * mean V ratings 
+  sumVprod_noun <- aggregate(df_noun[, 11], list(df_noun$year), sum) %>% rename("year"="Group.1") # sum V_prod by year
+  
+# Step 2: Standardisation. Weighted average = Sum of (severity product) by year/ Sum(repetition) by year
+  
+  # sum the repetitions of nouns by year
+  sum_repet_noun <- aggregate(df_noun[, 4], list(df_noun$year), sum) %>% rename(c("year"="Group.1", "sum_repet_noun"="repet"))
+
+  # join the sum occurrences for each word per year with the sumproducts
+  noun_year <- inner_join(sum_repet_noun, sumVAprod_noun, by = "year") # V+A
+  noun_year <- inner_join(noun_year, sumAprod_noun, by = "year") # A  
+  noun_year <- inner_join(noun_year, sumVprod_noun, by = "year") # V   
+
+  # compute standardisation
+  noun_year <- noun_year %>% mutate(sev_noun=(VA_prod/sum_repet_noun)) # V+A
+  noun_year <- noun_year %>% mutate(aro_noun=(A_prod/sum_repet_noun)) # A
+  noun_year <- noun_year %>% mutate(val_noun=(V_prod/sum_repet_noun)) # V
+
+head(noun_year)
+```
+
+#### Compute and save the final data frame
+
+```{r, include=TRUE, echo=TRUE}
+df_year <- inner_join(noun_year, word_year, by = "year") # join "noun_year" w "word_year" 
+df_year <- inner_join(df_year, trauma_count, by = "year") %>% rename("trauma_rf" = "ntf") # join "df_year" w "trauma_count"
+df_fin <- df_year %>% select(c(year, sev_word, aro_word, val_word, sev_noun, aro_noun, val_noun, trauma_rf)) # select only relevant variables
+show(df_fin) # this final df is in the "output" folder
+write.csv(df_fin, file = 'df_fin.csv') # unhash to save final df in working directory
+```
+
+## End of method setup
