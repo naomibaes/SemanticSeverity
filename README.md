@@ -14,6 +14,7 @@ Source code to evaluate the semantic severity (vertical expansion) of concepts.
 - `repet` = the number of times the lemma appeared with trauma within the context window in each sentence in the corpus
 - `cond_prob` = conditional probability: `repet` of each `lemma` divided by the sum of `repet` of lemmas in each year (i.e., a sort of relative frequency)
 
+See .... python script for preprocessing instructions.
 ## Method
 
 To compute severity indices (as coded in the .Rmd file):
