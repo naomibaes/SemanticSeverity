@@ -16,10 +16,9 @@ Source code to evaluate the semantic severity (vertical expansion) of concepts.
 
 ## Method
 
-To compute severity indices:
+To compute severity indices (as coded in the .Rmd file):
 - **Step 1**: First link the Warriner ratings with the concept collocates dataset and reverse score `V.Mean.Sum` so scores range from happy (1) to unhappy (9). 
-- **Step 2**: Filter `year` in the matched data frame from when all collocate counts reach double digits (< 10).
-- **Step 3**: Then, compute a weighted average for semantic severity by (1) summing `V.Mean.Sum` and `A.Mean.Sum`, (2) weighting it by the repetition of each colocate by year and (3) standardizing it by the sum of collocate repetitions grouped by year.
+- **Step 2**: Then, compute a weighted average for semantic severity by (1) summing `V.Mean.Sum` and `A.Mean.Sum`, (2) weighting it by the repetition of each colocate by year and (3) standardizing it by the sum of collocate repetitions grouped by year.
 
 ## References
 
