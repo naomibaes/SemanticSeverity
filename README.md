@@ -21,7 +21,7 @@ Source code to evaluate the semantic severity (vertical expansion) of concepts.
 ### Output folder
 
 [3] **"df.csv**: csv file containing severity indices for concept collocates
-- `year' = the year in which the lemma appeared in the corpus (e.g., 1970-2017)
+- `year` = the year in which the lemma appeared in the corpus (e.g., 1970-2017)
 - `sev_word` = index for the severity (valence+arousal ratings) of trauma-related lemmas
 - `aro_word` = index for the arousal ratings of trauma-related lemmas
 - `val_word` = index for the valence ratings of trauma-related lemmas
@@ -34,7 +34,7 @@ Source code to evaluate the semantic severity (vertical expansion) of concepts.
 - **Step 3**: De-capitalize words
 
 ### Collocations
-To extract collocations (`lemma`) and their repetitions (`repet`) in "concept_year_counts.csv", see script for corpus preprocessing instructions (see **"xx.xx"** file).
+To extract collocations (`lemma`) and their repetitions (`repet`) in "concept_year_counts.csv", see **"xx.xx"** for corpus preprocessing instructions.
 - **Step 1**: Compute algorithm to select lemmas within +/- 5-word context window of [term representing the concept], number of times words repeat, and order words by repetitions. 
 - **Step 2**: Extract word list and counts in a .csv file
 
