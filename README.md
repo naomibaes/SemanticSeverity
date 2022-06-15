@@ -1,5 +1,7 @@
 # Semantic Severity Method
-Source code to evaluate the semantic severity (vertical expansion) of concepts. *Note*: All files except "Warriner_rat.csv" contain example files using the term 'trauma' in a corpus of psychology article abstract. 
+Source code to evaluate the semantic severity (vertical expansion) of concepts. 
+
+*Note*: All files except "Warriner_rat.csv" contain example files using the term 'trauma' in a corpus of psychology article abstract. 
 
 ## Data
 
@@ -16,24 +18,27 @@ Source code to evaluate the semantic severity (vertical expansion) of concepts. 
 - `repet` = the number of times the lemma appeared with trauma within the context window in each sentence in the corpus
 - `cond_prob` = conditional probability: `repet` of each `lemma` divided by the sum of `repet` of lemmas in each year (i.e., a sort of relative frequency)
 
-*Note: The example file contains collocates for 'trauma' in a corpus of psychology article abstracts*
-
 ### Output folder
 
-[3] **"df.csv**: csv file containing severity indices (severity, valence, arousal) for concept collocates
+[3] **"df.csv**: csv file containing severity indices for concept collocates
 - `year' = the year in which the lemma appeared in the corpus (e.g., 1970-2017)
 - `sev_word` = index for the severity (valence+arousal ratings) of trauma-related lemmas
 - `aro_word` = index for the arousal ratings of trauma-related lemmas
 - `val_word` = index for the valence ratings of trauma-related lemmas
 
-*Note: Example of final data frame provided below.* 
-
 ## Method
 
-To extract collocations (`lemma`) and their repetitions (`repet`) in "concept_year_counts.csv_, see script for corpus preprocessing instructions (see **"xx.xx"** file).
+### Corpus Preprocessing
+- **Step 1**: Lemmatize words
+- **Step 2**: Remove stop-words and dashes
+- **Step 3**: De-capitalize words
+
+### Collocations
+To extract collocations (`lemma`) and their repetitions (`repet`) in "concept_year_counts.csv", see script for corpus preprocessing instructions (see **"xx.xx"** file).
 - **Step 1**: Compute algorithm to select lemmas within +/- 5-word context window of [term representing the concept], number of times words repeat, and order words by repetitions. 
 - **Step 2**: Extract word list and counts in a .csv file
 
+### Severity Index
 To compute severity indices (see **"severity_indices.Rmd"** file):
 - **Step 1**: First link the Warriner ratings with the concept collocates dataset and reverse score `V.Mean.Sum` so scores range from happy (1) to unhappy (9). 
 - **Step 2**: Then, compute a weighted average for semantic severity by (1) summing `V.Mean.Sum` and `A.Mean.Sum`, (2) weighting it by the repetition of each colocate by year and (3) standardizing it by the sum of collocate repetitions grouped by year.
