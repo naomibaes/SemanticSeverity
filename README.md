@@ -7,7 +7,7 @@ Source code to evaluate the semantic severity (vertical expansion) of concepts.
 
 ### Input folder
 
-[1] **"warriner_rat.csv"**: csv file containing valence and arousal ratings to be matched with lemmas that are concept collocates. File contains normed ratings of 13,915 words on a 9-point likert scale: "mean", "sd", "gender" responses for US residents grouped by age.
+[1] **"warriner_rat.csv"**: csv file containing valence and arousal ratings to be matched with lemmas that are concept collocates. File contains normed ratings of 13,915 words on a 9-point likert scale: "mean", "sd", "gender" responses for US residents grouped by age. Only relevant columns are noted below.
 - `word` = English lemmas
 - `V.Mean.Sum` = Summed average ratings of lemmas on Valence (i.e., the pleasantness of the emotions invoked by a word) from happy (9) to unhappy (1) 
 - `A.Mean.Sum` = Summed average ratings of lemmas on Arousal (i.e., the intensity of emotion provoked by a stimulus) from aroused (9) to calm/unaroused (1) 
