@@ -1,7 +1,7 @@
 # Semantic Severity Method
 Source code to evaluate the semantic severity (vertical expansion) of concepts. 
 
-*Note*: All files except "Warriner_rat.csv" contain example files using 'trauma' in a corpus of psychology article abstract. 
+*Note*: All files except "Warriner_rat.csv" contain example files using 'trauma' in a corpus of psychology article abstracts. 
 
 ## Data
 
@@ -12,7 +12,7 @@ Source code to evaluate the semantic severity (vertical expansion) of concepts.
 - `V.Mean.Sum` = Summed average ratings of lemmas on Valence (i.e., the pleasantness of the emotions invoked by a word) from happy (9) to unhappy (1) 
 - `A.Mean.Sum` = Summed average ratings of lemmas on Arousal (i.e., the intensity of emotion provoked by a stimulus) from aroused (9) to calm/unaroused (1) 
 
-[2] **"trauma_year_counts.csv"**: csv file containing corpus statistics for counts of collocates appearing near (i.e., within a set context window) the term representing the concept within sentences in the corpus by year.
+[2] **"trauma_year_counts.csv"**: csv file containing corpus statistics for counts of collocates appearing near (i.e., +/- 5-word context window) the term representing the concept in sentences in the corpus by year.
 - `year` = the year in which the lemma appeared in the corpus (e.g., 1970-2017)
 - `lemma` = the root form of the English word
 - `repet` = the number of times the lemma appeared with trauma within the context window in each sentence in the corpus
@@ -39,8 +39,8 @@ To extract collocations (`lemma`) and their repetitions (`repet`) in "concept_ye
 - **Step 2**: Extract word list and counts in a .csv file
 
 ### Severity Index
-To compute severity indices (see **"severity_indices.Rmd"** file):
-- **Step 1**: First link the Warriner ratings with the concept collocates dataset and reverse score `V.Mean.Sum` so scores range from happy (1) to unhappy (9). 
+To compute severity indices (see **"severity_indices.R"** file - also in **"severity_indices.Rmd"** form.):
+- **Step 1**: First, link the Warriner ratings with the concept collocates dataset and reverse score `V.Mean.Sum` so scores range from happy (1) to unhappy (9). 
 - **Step 2**: Then, compute a weighted average for semantic severity by (1) summing `V.Mean.Sum` and `A.Mean.Sum`, (2) weighting it by the repetition of each colocate by year and (3) standardizing it by the sum of collocate repetitions grouped by year.
 
 ## References
