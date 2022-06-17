@@ -17,8 +17,8 @@ library(dplyr) # data manipulation
 Load [1] collocates of trauma in the psychology corpus, [2] Warriner rating statistics, and [3] trauma frequencies in the psychology corpus.
 ```{r}
 # specify paths for datasets
-coll_path <- here("data", "trauma_year_counts.csv")
-warr_path <- here("data", "warriner_emotion_rat.csv")
+coll_path <- here("data/input", "trauma_year_counts.csv")
+warr_path <- here("data/input", "warriner_rat.csv")
 
 # load data
 coll_count <- read.csv(coll_path) # load [1] trauma collocates in psychology abstracts per year (1970-2017)
@@ -32,17 +32,12 @@ warr_rat <- read.csv(warr_path) %>% # load [2] Warriner norm ratings (1-9)
   select(c("id", "lemma", "V.Mean.Sum.R", "A.Mean.Sum")) # select relevant columns
 ```
 #### Compute the semantic severity measure.
-##### **1)** Prepare thedata.
+##### **1)** Prepare the data.
 ```{r}
 # create matched df
 matches <- inner_join(warr_rat, coll_count, by = "lemma") # join "Warriner lemmas "warr_rat" by `lemma` column in "collocations df "coll_count" to obtain unique word matches
 matches <- matches[, c(1, 2, 5, 6, 3, 4)] # reorder columns & rename data frame for data manipulation
 df_word <- matches %>% mutate(AV.Mean.Sum=(A.Mean.Sum + V.Mean.Sum.R)) # merge mean valence and arousal ratings
-
-# filter matched df from when all counts reach double digits
-word_count <- df_word %>% group_by(year) %>% summarise(count = n_distinct(lemma)) %>% ungroup() # aggregate repet of matched lemmas by year
-year_cutoff <- max(word_count$year[word_count$count < 10]) # find most recent year where `count` is less than 10
-df_word <- df_word %>% filter(year > year_cutoff) %>% arrange(year) # use "year_cutoff" as the filter criteria
 ``` 
 
 ##### **2)** Compute repetition-weighted severity indices.
@@ -81,6 +76,7 @@ df <- df_word %>% # compute standardization (for AV,A,V)
 ```
 ##### **3) **Create and save the final data frame.
 ```{r}
-write.csv(df, file='df.csv') # save final df in working directory (should contain variables for statistical analysis)
+write.csv(df, file='data/output/df.csv') # save final df in working directory (should contain variables for statistical analysis)
+cat("The data frame has been exported.", "\n")
 ```
 #### End of method setup.
