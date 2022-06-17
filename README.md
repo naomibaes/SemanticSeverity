@@ -1,7 +1,7 @@
 # Semantic Severity Method
 Source code to evaluate the semantic severity (vertical expansion) of concepts. 
 
-*Note*: All files except "Warriner_rat.csv" contain example files using the term 'trauma' in a corpus of psychology article abstract. 
+*Note*: All files except "Warriner_rat.csv" contain example files using 'trauma' in a corpus of psychology article abstract. 
 
 ## Data
 
