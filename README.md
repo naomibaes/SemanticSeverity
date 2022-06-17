@@ -16,7 +16,6 @@ Source code to evaluate the semantic severity (vertical expansion) of concepts.
 - `year` = the year in which the lemma appeared in the corpus (e.g., 1970-2017)
 - `lemma` = the root form of the English word
 - `repet` = the number of times the lemma appeared with trauma within the context window in each sentence in the corpus
-- `cond_prob` = conditional probability: `repet` of each `lemma` divided by the sum of `repet` of lemmas in each year (i.e., a sort of relative frequency)
 
 ### Output folder
 
