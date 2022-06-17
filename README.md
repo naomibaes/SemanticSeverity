@@ -12,7 +12,7 @@ Source code to evaluate the semantic severity (vertical expansion) of concepts.
 - `V.Mean.Sum` = Summed average ratings of lemmas on Valence (i.e., the pleasantness of the emotions invoked by a word) from happy (9) to unhappy (1) 
 - `A.Mean.Sum` = Summed average ratings of lemmas on Arousal (i.e., the intensity of emotion provoked by a stimulus) from aroused (9) to calm/unaroused (1) 
 
-[2] **"concept_year_counts.csv"**: csv file containing corpus statistics for counts of collocates appearing near (i.e., within a set context window) the term representing the concept within sentences in the corpus by year.
+[2] **"trauma_year_counts.csv"**: csv file containing corpus statistics for counts of collocates appearing near (i.e., within a set context window) the term representing the concept within sentences in the corpus by year.
 - `year` = the year in which the lemma appeared in the corpus (e.g., 1970-2017)
 - `lemma` = the root form of the English word
 - `repet` = the number of times the lemma appeared with trauma within the context window in each sentence in the corpus
