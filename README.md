@@ -19,11 +19,12 @@ Source code to evaluate the semantic severity (vertical expansion) of concepts.
 
 ### Output folder
 
-[3] **"df.csv**: csv file containing severity indices for concept collocates
+[3] **"df.csv**: csv file containing time series of severity indices
 - `year` = the year in which the lemma appeared in the corpus (e.g., 1970-2017)
 - `sev_word` = index for the severity (valence+arousal ratings) of trauma-related lemmas
 - `aro_word` = index for the arousal ratings of trauma-related lemmas
 - `val_word` = index for the valence ratings of trauma-related lemmas
+![head(df)](https://user-images.githubusercontent.com/58921702/174312003-82dc3a7b-8780-4a5c-9fec-d4743163d2c3.PNG)
 
 ## Method
 
