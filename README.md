@@ -30,14 +30,22 @@ Source code to evaluate the semantic severity (vertical expansion) of concepts.
 
 ### Corpus Preprocessing
 - **Step 1**: Lemmatize words
+```{r}
+preprocessing code
+```
 - **Step 2**: Remove stop-words and dashes
 - **Step 3**: De-capitalize words
 
 ### Collocations
 To extract collocations (`lemma`) and their repetitions (`repet`) in "concept_year_counts.csv", see **"xx.xx"** for corpus preprocessing instructions.
 - **Step 1**: Compute algorithm to select lemmas within +/- 5-word context window of [term representing the concept], number of times words repeat, and order words by repetitions. 
+```{r}
+cat preprocessed_corpus.csv |  grep -oP '(\w+) trauma\W' | sort -d | uniq -c | sed -r 's/^ +//g' | sort -k1 -n -r | head -n 10
+```
 - **Step 2**: Extract word list and counts in a .csv file
-
+```{r}
+code
+```
 ### Severity Index
 To compute severity indices (see **"severity_indices.R"** file - also in **"severity_indices.Rmd"** form.):
 - **Step 1**: First, link the Warriner ratings with the concept collocates dataset and reverse score `V.Mean.Sum` so scores range from happy (1) to unhappy (9). 
