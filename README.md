@@ -1,7 +1,7 @@
 # Semantic Severity Method
 Source code to evaluate the semantic severity (vertical expansion) of concepts. 
 
-*Note*: All files except "Warriner_rat.csv" contain example files using 'trauma' in a corpus of psychology article abstracts. 
+*Note*: All files except "warriner_rat.csv" contain example files using 'trauma' in a corpus of psychology article abstracts. 
 
 ## Data
 
@@ -37,7 +37,7 @@ preprocessing code
 - **Step 3**: De-capitalize words
 
 ### Collocations
-To extract collocations (`lemma`) and their repetitions (`repet`) in "concept_year_counts.csv", see **"xx.xx"** for corpus preprocessing instructions.
+To extract collocations (`lemma`) and their repetitions (`repet`) in "trauma_year_counts.csv", see **"xx.xx"** for corpus preprocessing instructions.
 - **Step 1**: Compute algorithm to select lemmas within +/- 5-word context window of [term representing the concept], number of times words repeat, and order words by repetitions. 
 ```{r}
 cat preprocessed_corpus.csv |  grep -oP '(\w+) trauma\W' | sort -d | uniq -c | sed -r 's/^ +//g' | sort -k1 -n -r | head -n 10
