@@ -29,12 +29,11 @@ Source code to evaluate the semantic severity (vertical expansion) of concepts.
 ## Method
 
 ### Corpus Preprocessing
-- **Step 1**: Lemmatize words
-```{r}
-preprocessing code
-```
-- **Step 2**: Remove stop-words and dashes
+The preprocessing is done via preprocess_data_spacy.py script. Note you need ``spacy'' library and download a pre-trained model, e.g. "en_core_web_lg" 
+- **Step 1**: Remove punctuation 
+- **Step 2**: Lemmatize words
 - **Step 3**: De-capitalize words
+- **Step 4**: Remove stop-words
 
 ### Collocations
 To extract collocations (`lemma`) and their repetitions (`repet`) in "trauma_year_counts.csv", see **"xx.xx"** for corpus preprocessing instructions.
