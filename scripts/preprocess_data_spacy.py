@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-# os.chdir('/home/localadmin/Documents/Spartan/')
 import os
 #import pandas as pd
 import re, spacy
