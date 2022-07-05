@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 # os.chdir('/home/localadmin/Documents/Spartan/')
 import os
-import pandas as pd
+#import pandas as pd
 import re, spacy
 import numpy as np
 
@@ -104,7 +104,6 @@ with codecs.open(sys.argv[1],'r') as _file:##raw (abstract,year) data
 			abstract_new = normalize_string(abstract, nlp = nlp, lemmatize=True, STOP_WORDS = STOP_WORDS, punct=True, tokenize=True)
 	
 			writer.write(' '.join(abstract_new)+" ||||| " +year+" ||||| "+journal_old+" ||||| "+journal_new)
-			#writer.write(' '.join(abstract_new)+" ||||| "+unicode(abstract)+" ||||| " +year+" ||||| "+unicode(journal_old))
 writer.close()
 
 
