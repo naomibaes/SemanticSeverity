@@ -1,54 +1,44 @@
 # Semantic Severity Method
 Source code to evaluate the semantic severity (vertical expansion) of concepts. 
 
-*Note*: All files except "warriner_rat.csv" contain example files using 'trauma' in a corpus of psychology article abstracts. 
+*Note*: Collocate files use three centre terms ($word = "trauma", "anxiety", "depression") however the list of terms can be expanded to include more terms. 
 
 ## Data
 
 ### Input folder
 
-[1] **"warriner_rat.csv"**: csv file containing valence and arousal ratings to be matched with lemmas that are concept collocates. File contains normed ratings of 13,915 words on a 9-point likert scale: "mean", "sd", "gender" responses for US residents grouped by age. Only relevant columns noted below.
+[1] **"warriner_rat.csv"**: csv file containing valence and arousal ratings to be matched with lemmas (collocates for the target/centre term). The file contains normed ratings of 13,915 words (lemmas specifically) on a 9-point likert scale: "mean", "sd", "gender" responses for US residents grouped by age. Only the below columns are relevant to this method.
 - `word` = English lemmas
 - `V.Mean.Sum` = Summed average ratings of lemmas on Valence (i.e., the pleasantness of the emotions invoked by a word) from happy (9) to unhappy (1) 
 - `A.Mean.Sum` = Summed average ratings of lemmas on Arousal (i.e., the intensity of emotion provoked by a stimulus) from aroused (9) to calm/unaroused (1) 
 
-[2] **"trauma_year_counts.csv"**: csv file containing corpus statistics for counts of collocates appearing near (i.e., +/- 5-word context window) the term representing the concept in sentences in the corpus by year.
-- `year` = the year in which the lemma appeared in the corpus (e.g., 1970-2017)
-- `lemma` = the root form of the English word
-- `repet` = the number of times the lemma appeared with trauma within the context window in each sentence in the corpus
+[2i--n] **"$word_year_coll_repet.csv"**: csv file containing corpus statistics for collocate's occurence near the target/centre term per year.
+- `year` = the year in which the lemma appeared in the corpus (1970-2017)
+- `coll` = collocate appearing within the target term's context window (+/- 5 words); also a lemma (the root form of the English word)
+- `repet` = the number of times that the collocates occur near (+/- 5-word context-window) the target/centre term in corpus sentences (abstracts) per year
 
 ### Output folder
 
-[3] **"df.csv**: csv file containing time series of severity indices
-- `year` = the year in which the lemma appeared in the corpus (e.g., 1970-2017)
-- `sev_word` = index for the severity (valence+arousal ratings) of trauma-related lemmas
-- `aro_word` = index for the arousal ratings of trauma-related lemmas
-- `val_word` = index for the valence ratings of trauma-related lemmas
+[3] **"$word_$corpus_severity_indices.csv**: csv file containing time series of severity indices
+- `year` = the year in which the lemma appeared in the corpus (1970-2017)
+- `sev_index` = index for the severity (repetition-weighted valence+arousal ratings) of $word-related lemmas
+- `aro_index` = index for the (repetition-weighted) arousal ratings of $word-related lemmas
+- `val_index` = index for the (repetition-weighted) valence ratings of $word-related lemmas
 ![head(df)](https://user-images.githubusercontent.com/58921702/174312003-82dc3a7b-8780-4a5c-9fec-d4743163d2c3.PNG)
 
 ## Method
 
 ### Corpus Preprocessing
-The preprocessing is done via preprocess_data_spacy.py script. Note you need ``spacy'' library and download a pre-trained model, e.g. "en_core_web_lg" 
-- **Step 1**: Remove punctuation 
-- **Step 2**: Lemmatize words
-- **Step 3**: De-capitalize words
-- **Step 4**: Remove stop-words
+See **"preprocess_data_spacy.py"** script (Python). Dependencies: ``spacy'' library and a pre-trained model (e.g., "en_core_web_lg"). 
+- **Steps**: (i) Remove punctuation, (ii) Lemmatize words, (iii) De-capitalize words, (iv) Remove stop-words
 
 ### Collocations
-To extract collocations (`lemma`) and their repetitions (`repet`) in "trauma_year_counts.csv", see **"xx.xx"** for corpus preprocessing instructions.
-- **Step 1**: Compute algorithm to select lemmas within +/- 5-word context window of [term representing the concept], number of times words repeat, and order words by repetitions. 
-```{r}
-cat preprocessed_corpus.csv |  grep -oP '(\w+) trauma\W' | sort -d | uniq -c | sed -r 's/^ +//g' | sort -k1 -n -r | head -n 10
-```
-- **Step 2**: Extract word list and counts in a .csv file
-```{r}
-code
-```
+See **"XXX"** script (bash) for how to extract collocations (`word`) and their repetitions (`repet`) in "trauma_year_counts.csv".
+- **Steps**: (i) Restrict corpus to only lines (abstracts/articles) containing the target/centre term, (ii) identify collocates (within 5-word context window), (iii) compute statistics for the number of times collocate occurs near the target/centre term and in what corpus year.
+
 ### Severity Index
-To compute severity indices (see **"severity_indices.R"** file - also in **"severity_indices.Rmd"** form.):
-- **Step 1**: First, link the Warriner ratings with the concept collocates dataset and reverse score `V.Mean.Sum` so scores range from happy (1) to unhappy (9). 
-- **Step 2**: Then, compute a weighted average for semantic severity by (1) summing `V.Mean.Sum` and `A.Mean.Sum`, (2) weighting it by the repetition of each colocate by year and (3) standardizing it by the sum of collocate repetitions grouped by year.
+See **"severity_indices.R"** script (R Programming).
+- **Steps**: (i) Link the Warriner ratings with the collocate data and reverse score `V.Mean.Sum` so scores range from happy (1) to unhappy (9), (ii) compute repetition-weighted average semantic severity index by (a) summing `V.Mean.Sum` and `A.Mean.Sum`, (b) weighting it by the repetition of each colocate by year and (c) dividing this numerator by the sum of collocate repetitions grouped by year (denominator).
 
 ## References
 
@@ -56,4 +46,5 @@ To compute severity indices (see **"severity_indices.R"** file - also in **"seve
 
 *This method has been used in the following manuscripts:* 
 
-[2] Baes, N., Vylomova, E., Zyphur, M. J., Haslam, N. The semantic inflation of 'trauma' in psychology. [SUBMITTED]
+[2] Baes, N., Vylomova, E., Zyphur, M., & Haslam, N. (2023). The semantic inflation of “trauma” in psychology. Psychology of Language and Communication, 27(1), 23-45. DOI: https://doi.org/10.58734/plc-2023-0002
+[3] XX (2023). Have the concepts of ‘anxiety’ and ‘depression’ been normalized or pathologized? A corpus study of historical semantic change
