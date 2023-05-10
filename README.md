@@ -1,7 +1,7 @@
 # Semantic Severity Method
 Source code to evaluate the semantic severity (vertical expansion) of concepts. 
 
-*Note*: Collocate files use three centre terms ($word = "trauma", "anxiety", "depression") but the list of terms can be expanded to include more terms. 
+*Note*: Collocate files use three centre terms ($word = "trauma", "anxiety", "depression") but the list can be expanded to include more terms. 
 
 ## Data
 
