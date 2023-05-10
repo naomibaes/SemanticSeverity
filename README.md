@@ -47,4 +47,5 @@ See **"warrmatched_coll_year_stats_indices.R"** script (R Programming). **"sever
 *This method has been used in the following manuscripts:* 
 
 [2] Baes, N., Vylomova, E., Zyphur, M., & Haslam, N. (2023). The semantic inflation of “trauma” in psychology. Psychology of Language and Communication, 27(1), 23-45. DOI: https://doi.org/10.58734/plc-2023-0002
+
 [3] XX (2023). Have the concepts of ‘anxiety’ and ‘depression’ been normalized or pathologized? A corpus study of historical semantic change
