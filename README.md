@@ -1,18 +1,18 @@
 # Semantic Severity Method
 Source code to evaluate the semantic severity (vertical expansion) of concepts. 
 
-*Note*: Collocate files use three centre terms ($word = "trauma", "anxiety", "depression") however the list of terms can be expanded to include more terms. 
+*Note*: Collocate files use three centre terms ($word = "trauma", "anxiety", "depression") but the list of terms can be expanded to include more terms. 
 
 ## Data
 
 ### Input folder
 
-[1] **"warriner_rat.csv"**: csv file containing valence and arousal ratings to be matched with lemmas (collocates for the target/centre term). The file contains normed ratings of 13,915 words (lemmas specifically) on a 9-point likert scale: "mean", "sd", "gender" responses for US residents grouped by age. Only the below columns are relevant to this method.
+[1] **"warriner_rat.csv"**: csv file containing valence and arousal ratings to be matched with lemmas (collocates for the target/centre term). The file contains normed ratings of 13,915 words (lemmas specifically) on a 9-point likert scale: "mean", "sd", "gender" responses for US residents grouped by age. Only these columns are relevant to the method:
 - `word` = English lemmas
 - `V.Mean.Sum` = Summed average ratings of lemmas on Valence (i.e., the pleasantness of the emotions invoked by a word) from happy (9) to unhappy (1) 
 - `A.Mean.Sum` = Summed average ratings of lemmas on Arousal (i.e., the intensity of emotion provoked by a stimulus) from aroused (9) to calm/unaroused (1) 
 
-[2i--n] **"$word_year_coll_repet.csv"**: csv file containing corpus statistics for collocate's occurence near the target/centre term per year.
+[2i--n] **"$word_year_coll_repet.csv"**: csv file containing corpus statistics for collocate's occurence near the target/centre term per year. 
 - `year` = the year in which the lemma appeared in the corpus (1970-2017)
 - `coll` = collocate appearing within the target term's context window (+/- 5 words); also a lemma (the root form of the English word)
 - `repet` = the number of times that the collocates occur near (+/- 5-word context-window) the target/centre term in corpus sentences (abstracts) per year
@@ -33,11 +33,11 @@ See **"preprocess_data_spacy.py"** script (Python). Dependencies: ``spacy'' libr
 - **Steps**: (i) Remove punctuation, (ii) Lemmatize words, (iii) De-capitalize words, (iv) Remove stop-words
 
 ### Collocations
-See **"XXX"** script (bash) for how to extract collocations (`word`) and their repetitions (`repet`) in "trauma_year_counts.csv".
+See **"retrieve_coll_year_stats_corpora.sh"** script (bash) for how to extract collocations (`word`) and their repetitions (`repet`) for 3 terms in 2 corpora.
 - **Steps**: (i) Restrict corpus to only lines (abstracts/articles) containing the target/centre term, (ii) identify collocates (within 5-word context window), (iii) compute statistics for the number of times collocate occurs near the target/centre term and in what corpus year.
 
 ### Severity Index
-See **"severity_indices.R"** script (R Programming).
+See **"warrmatched_coll_year_stats_indices.R"** script (R Programming). **"severity_indices.R"** is an example of how to run the method on one term.
 - **Steps**: (i) Link the Warriner ratings with the collocate data and reverse score `V.Mean.Sum` so scores range from happy (1) to unhappy (9), (ii) compute repetition-weighted average semantic severity index by (a) summing `V.Mean.Sum` and `A.Mean.Sum`, (b) weighting it by the repetition of each colocate by year and (c) dividing this numerator by the sum of collocate repetitions grouped by year (denominator).
 
 ## References
