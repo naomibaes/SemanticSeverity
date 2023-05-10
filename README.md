@@ -33,7 +33,7 @@ See **"preprocess_data_spacy.py"** script (Python). Dependencies: ``spacy'' libr
 - **Steps**: (i) Remove punctuation, (ii) Lemmatize words, (iii) De-capitalize words, (iv) Remove stop-words
 
 ### Collocations
-See **"retrieve_coll_year_stats_corpora.sh"** script (bash) for how to extract collocations (`word`) and their repetitions (`repet`) for 3 terms in 2 corpora.
+See **"retrieve_coll_year_repet_corpora.sh"** script (bash) for how to extract collocations (`word`) and their repetitions (`repet`) for 3 terms in 2 corpora.
 - **Steps**: (i) Restrict corpus to only lines (abstracts/articles) containing the target/centre term, (ii) identify collocates (within 5-word context window), (iii) compute statistics for the number of times collocate occurs near the target/centre term and in what corpus year.
 
 ### Severity Index
